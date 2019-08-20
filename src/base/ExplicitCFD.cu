@@ -794,6 +794,12 @@ void ExplicitCFD::writeNodalData()
 }
 
 
+ __global__ void ResidualIncNavStokesAlgo1Kernel() {
+      int ee = blockIdx.x *blockDim.x + threadIdx.x;
+
+      printf("%d \n", ee);
+      return;
+ }
 
 int  ExplicitCFD::solveExplicitStep()
 {
@@ -893,7 +899,8 @@ int  ExplicitCFD::solveExplicitStep()
             int veloOffset = iee*npElemVelo*ndim; //PRIVATE
             double fact = timeNow - dt;
             //Compute the element force vector, including residual force and time step
-            dtCrit = min(dtCrit, elems[iee].ResidualIncNavStokesAlgo1(node_coords, elemData, timeData, velo, veloPrev, veloDot, veloDotPrev, pres, presPrev, &FlocalVelo[veloOffset], &FlocalPres[presOffset], fact) );
+            ResidualIncNavStokesAlgo1Kernel<<<1,1>>>();
+            //dtCrit = min(dtCrit, elems[iee].ResidualIncNavStokesAlgo1(node_coords, elemData, timeData, velo, veloPrev, veloDot, veloDotPrev, pres, presPrev, &FlocalVelo[veloOffset], &FlocalPres[presOffset], fact) );
 
         } //LoopElem
 
